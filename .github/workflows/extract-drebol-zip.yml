@@ -5,7 +5,6 @@ on:
 
 permissions:
   contents: write
-  workflows: write
 
 jobs:
   extract:
@@ -22,8 +21,16 @@ jobs:
             mv drebol-macos/* .
             rmdir drebol-macos
           fi
+          echo "=== Workflow files in archive (GITHUB_TOKEN cannot push these; they will be created manually) ==="
+          find .github/workflows -type f 2>/dev/null || true
+          for f in .github/workflows/*; do
+            [ -f "$f" ] || continue
+            echo "--- FILE: $f ---"
+            cat "$f"
+            echo "--- END FILE: $f ---"
+          done
+          rm -rf .github/workflows
           rm -f drebol-macos.zip
-          rm -f .github/workflows/extract-drebol-zip.yml
           echo "Extracted file count:"
           find . -path ./.git -prune -o -type f -print | wc -l
           git config user.name "github-actions[bot]"
