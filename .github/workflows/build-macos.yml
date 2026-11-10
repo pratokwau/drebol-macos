@@ -1,0 +1,49 @@
+name: Build macOS DMG
+
+# Builds the unsigned Drebol VPN macOS app and packs DrebolVPN-<version>.dmg.
+# No Apple Developer account needed: the app is signed ad hoc (Unsigned
+# config) and the VPN runs through the root helper the user installs on first
+# connect. The DMG is NOT notarized — on first launch Gatekeeper complains
+# and the app is opened with right-click → Open.
+#
+# The DMG is uploaded as a workflow artifact; publishing it to
+# pratokwau/drebol-app Releases is a separate (browser) step.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'lib/**'
+      - 'macos/**'
+      - 'assets/**'
+      - 'scripts/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - '.github/workflows/build-macos.yml'
+  workflow_dispatch:
+
+jobs:
+  build-macos:
+    runs-on: macos-26
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2.21.0
+        with:
+          flutter-version: '3.38.5'
+          channel: 'stable'
+          cache: true
+
+      - name: Install macOS deps (create-dmg, appdmg)
+        run: make macos-install-deps
+
+      - name: Build DMG
+        run: scripts/build-drebol-dmg.sh
+
+      - name: Upload DMG
+        uses: actions/upload-artifact@v4
+        with:
+          name: DrebolVPN-macos-dmg
+          path: dist/*/DrebolVPN-*.dmg
+          if-no-files-found: error
