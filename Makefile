@@ -520,11 +520,13 @@ macos-libs:
 	mv $(DESKTOP_OUT)/HiddifyTunnelCore.xcframework macos/Frameworks/
 	touch macos/Frameworks/HiddifyTunnelCore.xcframework/.downloaded
 	# The core helper (macos/scripts/embed-core-helper.sh) is built from the shared C launcher. CI
-	# does not check out the submodule, so take that file from the commit the app pins.
+	# does not check out the submodule, so take that file from the commit the app pins. The commit
+	# is pinned literally: this repo has no hiddify-core submodule pointer in HEAD, so
+	# `git rev-parse HEAD:hiddify-core` fails here.
 	test -f hiddify-core/cmd/launcher/main.c || { \
 		mkdir -p hiddify-core/cmd/launcher && \
 		curl -fL --retry 5 --retry-delay 5 --retry-all-errors -o hiddify-core/cmd/launcher/main.c \
-			https://raw.githubusercontent.com/hiddify/hiddify-core/$$(git rev-parse HEAD:hiddify-core)/cmd/launcher/main.c; }
+			https://raw.githubusercontent.com/hiddify/hiddify-core/02cbbf7886a213cd2a822129f2533f882d934a0f/cmd/launcher/main.c; }
 
 ios-libs: #not tested
 	mkdir -p $(IOS_OUT)
