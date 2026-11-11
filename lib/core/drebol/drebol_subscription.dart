@@ -19,7 +19,7 @@ abstract final class DrebolSubscriptionValidator {
   /// punctuation. Returns null when there is no Drebol link in the text.
   static String? extractSubscriptionUrl(String text) {
     final match = RegExp(
-      r'(?:https?://)?key\.drbl\.tech/[^\s<>"\'\)\]]+',
+      r'(?:https?://)?key\.drbl\.tech/[^\s<>\x22\x27\)\]]+',
       caseSensitive: false,
     ).firstMatch(text);
     if (match == null) return null;

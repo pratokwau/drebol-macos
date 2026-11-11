@@ -233,9 +233,6 @@ class ProfileRepositoryImpl with ExceptionHandler, InfraLogger implements Profil
 
   @override
   TaskEither<ProfileFailure, String> addLocal(String content, {UserOverride? userOverride}) =>
-
-  @override
-  TaskEither<ProfileFailure, String> addLocal(String content, {UserOverride? userOverride}) =>
       TaskEither.tryCatch(() async {
         final id = const Uuid().v4();
         final file = _profilePathResolver.file(id);
